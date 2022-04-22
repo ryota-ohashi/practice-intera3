@@ -1,0 +1,25 @@
+* {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+body{
+  overflow: hidden;
+}
+.cont{
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.stalker{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  // background-color: rgb(255, 224, 88);
+  font-size: 24px;
+  font-weight: bold;
+}
