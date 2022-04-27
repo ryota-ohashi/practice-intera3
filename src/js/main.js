@@ -15,7 +15,6 @@ class Intera3 extends MouseMove {
     this.cont = []
     this.stalker = document.querySelectorAll('.string');
     this.stalker.forEach((el, i) => {
-      el.style.opacity = "1";
       let obj = {
         rate:0,            // 最終目標値までの進捗度
         posTg2:{x:0, y:0}, // 最終目標位置
