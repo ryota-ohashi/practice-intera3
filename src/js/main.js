@@ -1,5 +1,4 @@
 import '../scss/style.scss'
-import Mousemove from './core/mouseMove';
 // import MouseStalker from './core/mouseStalker'
 import MouseMove from './core/mouseMove'
 
@@ -10,56 +9,89 @@ class Intera3 extends MouseMove {
     this.bind();
   }
   setParams() {
-    this.sw = window.innerWidth
-    this.sh = window.innerHeight
+    const strings = document.querySelector('.strings-wrap').getAttribute('data-strings');
+    this.pushElement(strings);
 
-    this.cont = [];
-    this.stalker = document.querySelectorAll('.stalker');
-    this.stalker.forEach( el => {
+    this.cont = []
+    this.stalker = document.querySelectorAll('.string');
+    this.stalker.forEach((el, i) => {
+      el.style.opacity = "1";
       let obj = {
-        rate: 0,
-        posTg1: {x:0, y:0}, //寄り道
-        posTg2: {x:this.mouse.x, y:this.mouse.y}, //最終地点
-        posNow: {x:0, y:0}, // 現在位置
-        el: el
+        rate:0,            // 最終目標値までの進捗度
+        posTg2:{x:0, y:0}, // 最終目標位置
+        posTg1:{x:0, y:0}, // 寄り道位置
+        posNow:{x:0, y:0}, // 現在位置
+        el:el,
+        scale:1,
+        isStart:false
       }
-      this.reset(obj);
+      this.reset(obj, i * 0.3, i);
       this.cont.push(obj);
     })
-
   }
-  reset(obj) {
+  pushElement(strings){
+    const stringArray = strings.split('');
+    const elCont = document.querySelector('.strings-wrap');
+    stringArray.forEach((el) => {
+      const stringElement = document.createElement('div');
+      stringElement.textContent = el;
+      stringElement.classList.add('string');
+      elCont.appendChild(stringElement);
+    })
+  }
+  reset(obj, delay, index){
+    let sw = window.innerWidth
+    let sh = window.innerHeight
+
     obj.rate = 0;
 
-    obj.posNow.x = this.random(0, this.sw);
-    obj.posNow.y = this.random(0, this.sh);
+    obj.posNow.x = this.random(sw * 0.25, sw * 0.75);
+    obj.posNow.y = -sh * 0.25;
 
-    obj.posTg1.x = this.random(0, this.sw);
-    obj.posTg1.y = this.random(0, this.sh);
+    // 最終目標位置 画面外へ
+    obj.posTg2.x = sw * 0.5 + sw * 0.03 * (index - 6.5);
+    // obj.posTg2.x = sw * 0.5 + sw * 0.06 * (index - 6.5); //球用
+    obj.posTg2.y = sh * 0.5;
 
+    // 寄り道
+    let range = 1;
+    obj.posTg1.x = obj.posNow.x + this.random(-sw * range, sw * range);
+    obj.posTg1.y = this.random(sh * 0.4, sh * 0.6);
+
+    // スケールのランダムに
+    obj.scale = this.random(0.8, 1);
+
+    // rate値をアニメーション
+    TweenMax.killTweensOf(obj);
+    TweenMax.to(obj, 1, {
+      rate:1,
+      ease:Power3.easeOut,
+      delay:delay
+    })
+  }
+  update(){
+    // イージングかける
+    const ease = 0.08;
+
+    this.cont.forEach(obj => {
+
+      if(obj.rate > 0) {
+        let tgX = (obj.posTg1.x * (1 - obj.rate)) + (obj.posTg2.x * obj.rate);
+        let tgY = (obj.posTg1.y * (1 - obj.rate)) + (obj.posTg2.y * obj.rate);
+        obj.posNow.x += (tgX - obj.posNow.x) * ease;
+        obj.posNow.y += (tgY - obj.posNow.y) * ease;
+      }
+
+      TweenMax.set(obj.el, {
+        x:obj.posNow.x,
+        y:obj.posNow.y,
+        scale:obj.scale
+      });
+    })
+    window.requestAnimationFrame(this.update.bind(this));
   }
   random(min, max){
     return Math.random() * (max - min) + min;
-  }
-  update(){
-    this.cont.forEach(obj => {
-      obj.rate += 0.01;
-      if(obj.rate >= 1) obj.rate = 0;
-
-      obj.posTg2.x = this.mouse.x;
-      obj.posTg2.y = this.mouse.y;
-
-      let x = (obj.posTg1.x * (1 - obj.rate)) + (obj.posTg2.x * obj.rate)
-      let y = (obj.posTg1.y * (1 - obj.rate)) + (obj.posTg2.y * obj.rate)
-
-      const ease = 0.25;
-      obj.posNow.x += (x - obj.posNow.x) * ease;
-      obj.posNow.y += (x - obj.posNow.y) * ease;
-
-      obj.el.style.transform = "matrix(1, 0, 0, 1," + obj.posNow.x + ", " + obj.posNow.y + ")";
-    })
-
-    window.requestAnimationFrame(this.update.bind(this));
   }
   bind(){
     window.requestAnimationFrame(this.update.bind(this));

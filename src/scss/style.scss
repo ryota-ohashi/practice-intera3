@@ -4,12 +4,12 @@
 body{
   overflow: hidden;
 }
-.cont{
+.strings-wrap{
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 }
-.stalker{
+.string{
   position: absolute;
   top: 0;
   left: 0;
@@ -19,7 +19,8 @@ body{
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  // background-color: rgb(255, 224, 88);
   font-size: 24px;
   font-weight: bold;
+  opacity: 0;
+  transition: opacity .3s;
 }
