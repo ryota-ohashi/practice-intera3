@@ -13,8 +13,8 @@ class Intera3 extends MouseMove {
     this.pushElement(strings);
 
     this.cont = []
-    this.stalker = document.querySelectorAll('.string');
-    this.stalker.forEach((el, i) => {
+    this.stringsArray = document.querySelectorAll('.string');
+    this.stringsArray.forEach((el, i) => {
       let obj = {
         rate:0,            // 最終目標値までの進捗度
         posTg2:{x:0, y:0}, // 最終目標位置
