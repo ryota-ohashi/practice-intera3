@@ -1,10 +1,7 @@
 import '../scss/style.scss'
-// import MouseStalker from './core/mouseStalker'
-import MouseMove from './core/mouseMove'
 
-class Intera3 extends MouseMove {
+class Intera3 {
   constructor() {
-    super();
     this.setParams();
     this.bind();
   }
